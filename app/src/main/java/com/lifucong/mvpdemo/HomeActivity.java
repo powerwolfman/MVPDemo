@@ -24,19 +24,33 @@ public class HomeActivity extends AppCompatActivity implements HomeView{
     @BindView(R.id.prg_loading)
     ProgressBar prgLoading;
     private ArrayAdapter<String> adapter;
+    private HomePresenter homePresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+    }
+
+    @Override
+    public void onContentChanged() {
+        super.onContentChanged();
         ButterKnife.bind(this);
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
         listView.setAdapter(adapter);
+        homePresenter=new HomePresenter();
+        homePresenter.attachView(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        homePresenter.datachView();
     }
 
     @OnClick(R.id.btn_refresh)
     public void refreshData() {
-        new HomePresenter(this).loadData();
+        homePresenter.loadData();
     }
 
 
@@ -53,7 +67,7 @@ public class HomeActivity extends AppCompatActivity implements HomeView{
     @Override
     public void refreshListView(List<String>list){
         adapter.clear();
-       adapter.addAll(list);
+        adapter.addAll(list);
         adapter.notifyDataSetChanged();
     }
     @Override
