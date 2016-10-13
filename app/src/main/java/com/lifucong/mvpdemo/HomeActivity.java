@@ -36,7 +36,7 @@ public class HomeActivity extends AppCompatActivity implements HomeView{
 
     @OnClick(R.id.btn_refresh)
     public void refreshData() {
-        new HomeManager(this).loadData();
+        new HomePresenter(this).loadData();
     }
 
 
