@@ -4,6 +4,8 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 
+import org.greenrobot.eventbus.EventBus;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,22 +15,6 @@ import java.util.List;
 
 public class HomeModel {
     private Thread mThread;
-    private Model mModel;
-    private Handler handler;
-
-    public HomeModel(Model model){
-        mModel=model;
-        handler = new Handler(Looper.getMainLooper()){
-            @Override
-            public void handleMessage(Message msg) {
-                super.handleMessage(msg);
-                if (msg.what==100) {
-                    List<String > datas= (List<String>) msg.obj;
-                    mModel.setData(datas);
-                }
-            }
-        };
-    }
 
     public void asyncLoadData(){
         if (mThread!=null) {
@@ -43,20 +29,18 @@ public class HomeModel {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                List<String> datas=new ArrayList<>();
-                for (int i = 0; i < 20; i++) {
-                    datas.add("我是第"+i+"条数据，嘿嘿！");
+                if (System.currentTimeMillis() % 2 == 0) {
+                    EventBus.getDefault().post(new HomeEvent());
+                } else {
+                    List<String> datas = new ArrayList<>();
+                    for (int i = 0; i < 20; i++) {
+                        datas.add("我是第" + i + "条数据，嘿嘿！");
+                    }
+                    EventBus.getDefault().post(new HomeEvent(datas));
                 }
-                Message msg=Message.obtain();
-                msg.obj=datas;
-                msg.what=100;
-                handler.sendMessage(msg);
             }
         });
         mThread.start();
     }
 
-    public interface Model{
-        void setData(List<String>datas);
-    }
 }

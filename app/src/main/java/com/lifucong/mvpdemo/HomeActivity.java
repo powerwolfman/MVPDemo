@@ -39,12 +39,14 @@ public class HomeActivity extends AppCompatActivity implements HomeView{
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
         listView.setAdapter(adapter);
         homePresenter=new HomePresenter();
+        homePresenter.onCreate();
         homePresenter.attachView(this);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        homePresenter.onDestroy();
         homePresenter.datachView();
     }
 

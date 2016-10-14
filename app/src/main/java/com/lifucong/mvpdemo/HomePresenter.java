@@ -4,29 +4,31 @@ import android.support.annotation.UiThread;
 
 import com.lifucong.mvpdemo.basemvp.MvpPresenter;
 
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.util.List;
 
 /**
  * Created by Administrator on 2016/10/13.
  */
 
-public class HomePresenter extends MvpPresenter<HomeView> implements HomeModel.Model{
+public class HomePresenter extends MvpPresenter<HomeView>{
 
     @UiThread
     public void loadData(){
-        super.getView().showLoading();
-        new HomeModel(this).asyncLoadData();
+        getView().showLoading();
+        new HomeModel().asyncLoadData();
     }
 
-    @UiThread
-    @Override
-    public void setData(List<String> datas) {
-        super.getView().hideLoading();
-        if (datas==null) {
-            super.getView().showMessage("未知错误");
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(HomeEvent homeEvent){
+        getView().hideLoading();
+        if (homeEvent.datas==null) {
+            getView().showMessage("未知错误");
             return;
         }
-        super.getView().refreshListView(datas);
+        getView().refreshListView(homeEvent.datas);
     }
 
     //一个HomeView接口（视图借口）空的实现
